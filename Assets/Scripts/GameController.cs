@@ -21,7 +21,7 @@ public class GameController : MonoBehaviour
     private List<Egg> eggs = new List<Egg>();
 
     private int level = 0;
-    private int noOfEggsFoeNextLEvel = 0;
+    public int noOfEggsFoeNextLEvel = 0;
 
     private int score;
     private int hiScore;
@@ -31,12 +31,18 @@ public class GameController : MonoBehaviour
     [SerializeField] private Text gameOverText;
     [SerializeField] private Text tapToPlayText;
 
+    public int noOfSpikesToSpawn;
+    public GameObject spikePrefab;
+
+    [SerializeField] private Spike spike;
+    private List<Spike> spikes = new List<Spike>();
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
         Debug.Log("Starting Snake Game");
         CreateWalls();
+        
         
     }
     private void Update()
@@ -62,23 +68,31 @@ public class GameController : MonoBehaviour
         score = 0;
         hiScore = 0;
         level = 0;
+        noOfSpikesToSpawn = 1;
+        CraeteSpike();
 
         scoreText.text = "Score :" + score;
         hiScoreText.text = "HiScore :" + hiScore;
         waitingToPlay = false;
         isAlive = true;
 
+        
         KillOldEggs();
+        DestroyOldSpikes();
         LevelUp();
 
         tapToPlayText.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
     }
 
+    private void IncreaseSpikeSpawn()
+    {
+        noOfSpikesToSpawn++;
+        CraeteSpike();
+    }
     private void LevelUp()
     {
         level++;
-
         noOfEggsFoeNextLEvel = 4 + (level *2);
 
         snakeSpeed = 1f + (level /4f);
@@ -163,6 +177,7 @@ public class GameController : MonoBehaviour
 
         gameOverText.gameObject.SetActive(true);
         tapToPlayText.gameObject.SetActive(true);
+
     }
     public void EggEaten(Egg egg)
     {
@@ -173,7 +188,8 @@ public class GameController : MonoBehaviour
         if (noOfEggsFoeNextLEvel == 0)
         {
             score += 10;
-            LevelUp();     
+            LevelUp();
+            IncreaseSpikeSpawn();
         }
         else if(noOfEggsFoeNextLEvel == 1)
         {
@@ -192,5 +208,34 @@ public class GameController : MonoBehaviour
         hiScoreText.text = "HiScore :" + hiScore;
         eggs.Remove(egg);
         Destroy(egg.gameObject);
+    }
+
+    public void HitSpike(Spike spike)
+    {
+        spikes.Remove(spike);
+        Destroy(spike.gameObject,0.5f);
+    }
+
+    public void DestroyOldSpikes()
+    {
+        foreach(Spike spike in spikes)
+        {
+            Destroy(spike.gameObject);
+        }
+        spikes.Clear();
+       
+    }
+
+    void CraeteSpike()
+    { 
+          float posX = Random.Range(-3f, 3f);
+           float posY = Random.Range(-6.1f, 6.1f);
+
+            Vector3 randomPos = new Vector3(posX, posY, -0.01f);
+
+            for (int i = 0; i < noOfSpikesToSpawn; i++)
+            {
+               Instantiate(spikePrefab, randomPos, Quaternion.identity).GetComponent<Spike>();
+            }
     }
 }

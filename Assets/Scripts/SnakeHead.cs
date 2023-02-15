@@ -128,8 +128,9 @@ public class SnakeHead : BodyPart
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Egg egg = collision.gameObject.GetComponent<Egg>();
+        Spike spike = collision.gameObject.GetComponent<Spike>();
 
-        if(egg)
+        if (egg)
         {
             int randomSoundPlay = Random.Range(0, 3);
             gulpSounds[randomSoundPlay].Play();
@@ -142,6 +143,14 @@ public class SnakeHead : BodyPart
             dieSound.Play();
             GameController.instance.GameOver();
         }
+
+        
+        if(spike)
+        {
+            dieSound.Play();
+            GameController.instance.GameOver();
+            SpikeCollide(spike);
+        }
     }
 
     private void EatEgg(Egg egg)
@@ -151,4 +160,10 @@ public class SnakeHead : BodyPart
 
         GameController.instance.EggEaten(egg);
     }
+
+    private void SpikeCollide(Spike _spike)
+    {
+        GameController.instance.HitSpike(_spike);
+    }
+
 }
