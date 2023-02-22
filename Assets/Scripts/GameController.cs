@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     public GameObject rockPrefab;
     public GameObject eggPrefab;
     public GameObject goldenEggPrefab;
-    private const float width = 3.7f;
+    private const float width = 3.5f;
     private const float height = 7f;
     public bool isAlive = true;
     public bool waitingToPlay = true;
@@ -78,9 +78,7 @@ public class GameController : MonoBehaviour
 
         
         KillOldEggs();
-        DestroyOldSpikes();
         LevelUp();
-
         tapToPlayText.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
     }
@@ -237,5 +235,7 @@ public class GameController : MonoBehaviour
             {
                Instantiate(spikePrefab, randomPos, Quaternion.identity).GetComponent<Spike>();
             }
+
+        spikes.Add(spike);
     }
 }
